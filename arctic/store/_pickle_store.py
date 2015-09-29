@@ -1,8 +1,8 @@
 import bson
 from bson.binary import Binary
 from bson.errors import InvalidDocument
-import cPickle
-import cStringIO as stringio
+import pickle
+import io as stringio
 import lz4
 import pymongo
 import pprint
@@ -56,9 +56,9 @@ class PickleStore(object):
         collection = arctic_lib.get_top_level_collection()
         # Try to pickle it. This is best effort
         version['blob'] = _MAGIC_CHUNKED
-        pickled = lz4.compressHC(cPickle.dumps(item, protocol=cPickle.HIGHEST_PROTOCOL))
+        pickled = lz4.compressHC(pickle.dumps(item, protocol=pickle.HIGHEST_PROTOCOL))
 
-        for i in xrange(len(pickled) / _CHUNK_SIZE + 1):
+        for i in range(len(pickled) / _CHUNK_SIZE + 1):
             segment = {'data': Binary(pickled[i * _CHUNK_SIZE : (i + 1) * _CHUNK_SIZE])}
             sha = checksum(symbol, segment)
             segment['segment'] = i

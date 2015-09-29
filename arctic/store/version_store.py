@@ -54,13 +54,13 @@ class VersionStore(object):
         logger.info("Trying to enable usePowerOf2Sizes...")
         try:
             enable_powerof2sizes(arctic_lib.arctic, arctic_lib.get_name())
-        except OperationFailure, e:
+        except OperationFailure as e:
             logger.error("Library created, but couldn't enable usePowerOf2Sizes: %s" % str(e))
 
         logger.info("Trying to enable sharding...")
         try:
             enable_sharding(arctic_lib.arctic, arctic_lib.get_name(), hashed=hashed)
-        except OperationFailure, e:
+        except OperationFailure as e:
             logger.warn("Library created, but couldn't enable sharding: %s. This is OK if you're not 'admin'" % str(e))
 
     @mongo_retry
@@ -138,7 +138,7 @@ class VersionStore(object):
         if regex is not None:
             query ['symbol'] = {'$regex' : regex}
         if kwargs:
-            for k, v in kwargs.iteritems():
+            for k, v in kwargs.items():
                 query['metadata.' + k] = v
         if snapshot is not None:
             try:
@@ -328,7 +328,7 @@ class VersionStore(object):
                                        date_range=date_range,
                                        read_preference=ReadPreference.PRIMARY,
                                        **kwargs)
-        except Exception, e:
+        except Exception as e:
             log_exception('read', e, 1)
             raise
 
@@ -348,7 +348,7 @@ class VersionStore(object):
             `str` : snapshot name which contains the version
             `datetime.datetime` : the version of the data that existed as_of the requested point in time
         """
-        print self._get_info(symbol, as_of)
+        print(self._get_info(symbol, as_of))
 
     def _get_info(self, symbol, as_of=None):
         _version = self._read_metadata(symbol, as_of=as_of)
@@ -404,7 +404,7 @@ class VersionStore(object):
         _version = None
         if as_of is None:
             _version = versions_coll.find_one({'symbol': symbol}, sort=[('version', pymongo.DESCENDING)])
-        elif isinstance(as_of, basestring):
+        elif isinstance(as_of, str):
             # as_of is a snapshot
             snapshot = self._snapshots.find_one({'name': as_of})
             if snapshot:

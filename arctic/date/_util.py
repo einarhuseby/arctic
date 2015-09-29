@@ -97,7 +97,7 @@ def to_dt(date, default_tz=None):
     -------
     Non-naive datetime
     """
-    if isinstance(date, (int, long)):
+    if isinstance(date, int):
         return ms_to_datetime(date, default_tz)
     elif date.tzinfo is None:
         if default_tz is None:
@@ -131,7 +131,7 @@ def to_pandas_closed_closed(date_range):
 
 def ms_to_datetime(ms, tzinfo=None):
     """Convert a millisecond time value to an offset-aware Python datetime object."""
-    if not isinstance(ms, (int, long)):
+    if not isinstance(ms, int):
         raise TypeError('expected integer, not %s' % type(ms))
 
     if tzinfo is None:
@@ -149,6 +149,6 @@ def _add_tzone(dtm):
 def datetime_to_ms(d):
     """Convert a Python datetime object to a millisecond epoch (UTC) time value."""
     try:
-        return long((calendar.timegm(_add_tzone(d).utctimetuple()) + d.microsecond / 1000000.0) * 1e3)
+        return int((calendar.timegm(_add_tzone(d).utctimetuple()) + d.microsecond / 1000000.0) * 1e3)
     except AttributeError:
         raise TypeError('expect Python datetime object, not %s' % type(d))

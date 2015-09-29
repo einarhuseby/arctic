@@ -35,7 +35,7 @@ class PandasStore(NdarrayStore):
         if isinstance(index, MultiIndex):
             # array of tuples to numpy cols. copy copy copy
             if len(df) > 0:
-                ix_vals = map(np.array, zip(*index.values))
+                ix_vals = list(map(np.array, list(zip(*index.values))))
             else:
                 # empty multi index has no size, create empty arrays for recarry..
                 ix_vals = [np.array([]) for n in index.names]
@@ -83,7 +83,7 @@ class PandasStore(NdarrayStore):
         metadata['columns'] = columns
         names = index_names + columns
         arrays = ix_vals + column_vals
-        arrays = map(_to_primitive, arrays)
+        arrays = list(map(_to_primitive, arrays))
         dtype = np.dtype([(str(x), v.dtype) if len(v.shape) == 1 else (str(x), v.dtype, v.shape[1]) for x, v in zip(names, arrays)],
                          metadata=metadata)
         rtn = np.rec.fromarrays(arrays, dtype=dtype, names=names)
@@ -105,7 +105,7 @@ class PandasStore(NdarrayStore):
                 log.info('Pandas dataframe %s contains Objects, saving as Blob' % symbol)
                 # Will fall-back to saving using Pickle
                 return False
-            elif any([len(x[0].shape) for x in arr.dtype.fields.values()]):
+            elif any([len(x[0].shape) for x in list(arr.dtype.fields.values())]):
                 log.info('Pandas dataframe %s contains >1 dimensional arrays, saving as Blob' % symbol)
                 return False
             else:

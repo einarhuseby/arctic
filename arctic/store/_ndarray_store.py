@@ -116,7 +116,7 @@ class NdarrayStore(object):
             collection.create_index([('symbol', pymongo.ASCENDING),
                                      ('parent', pymongo.ASCENDING),
                                      ('segment', pymongo.ASCENDING)], unique=True, background=True)
-        except OperationFailure, e:
+        except OperationFailure as e:
             if "can't use unique indexes" in str(e):
                 return
             raise
@@ -427,7 +427,7 @@ Version document:
         i = -1
 
         # Compress
-        idxs = xrange(int(np.ceil(float(length) / chunk_size)))
+        idxs = range(int(np.ceil(float(length) / chunk_size)))
         chunks = [(item[i * chunk_size: (i + 1) * chunk_size]).tostring() for i in idxs]
         compressed_chunks = compress_array(chunks)
 

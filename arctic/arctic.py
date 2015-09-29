@@ -90,7 +90,7 @@ class Arctic(object):
         self._connect_timeout = connectTimeoutMS
         self._server_selection_timeout = serverSelectionTimeoutMS
 
-        if isinstance(mongo_host, basestring):
+        if isinstance(mongo_host, str):
             self.mongo_host = mongo_host
         else:
             self.__conn = mongo_host
@@ -226,7 +226,7 @@ class Arctic(object):
             error = None
             l = ArcticLibraryBinding(self, library)
             lib_type = l.get_library_type()
-        except (OperationFailure, AutoReconnect), e:
+        except (OperationFailure, AutoReconnect) as e:
             error = e
 
         if error or not lib_type:
@@ -242,7 +242,7 @@ class Arctic(object):
         return self._library_cache[library]
 
     def __getitem__(self, key):
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             return self.get_library(key)
         else:
             raise ArcticException("Unrecognised library specification - use [libraryName]")
