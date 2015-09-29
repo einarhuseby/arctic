@@ -29,7 +29,7 @@ def checksum(symbol, doc):
     """
     sha = hashlib.sha1()
     sha.update(symbol)
-    for k in sorted(iter(doc.keys()), reverse=True):
+    for k in sorted(iter(list(doc.keys())), reverse=True):
         sha.update(str(doc[k]))
     return Binary(sha.digest())
 

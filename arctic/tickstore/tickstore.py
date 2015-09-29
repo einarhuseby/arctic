@@ -244,7 +244,7 @@ class TickStore(object):
             data = self._read_bucket(b, column_set, column_dtypes,
                                      multiple_symbols or (columns is not None and 'SYMBOL' in columns),
                                      include_images, columns)
-            for k, v in data.items():
+            for k, v in list(data.items()):
                 try:
                     rtn[k].append(v)
                 except KeyError:
@@ -297,7 +297,7 @@ class TickStore(object):
         rtn = {}
         index = cols[INDEX]
         full_length = len(index)
-        for k, v in cols.items():
+        for k, v in list(cols.items()):
             if k != INDEX and k != 'SYMBOL':
                 col_len = len(v)
                 if col_len < full_length:
@@ -480,7 +480,7 @@ class TickStore(object):
         mongo_retry(self._collection.insert_many)(buckets)
         t = (dt.now() - start).total_seconds()
         ticks = len(buckets) * self.chunk_size
-        print("%d buckets in %s: approx %s ticks/sec" % (len(buckets), t, int(ticks / t)))
+        print(("%d buckets in %s: approx %s ticks/sec" % (len(buckets), t, int(ticks / t))))
 
     def _pandas_to_buckets(self, x, symbol):
         rtn = []
@@ -563,7 +563,7 @@ class TickStore(object):
         start = to_dt(ticks[0]['index'])
         end = to_dt(ticks[-1]['index'])
         for i, t in enumerate(ticks):
-            for k, v in t.items():
+            for k, v in list(t.items()):
                 try:
                     if k != 'index':
                         rowmask[k][i] = 1
@@ -577,13 +577,13 @@ class TickStore(object):
                     data[k] = [v]
 
         rowmask = dict([(k, Binary(lz4.compressHC(np.packbits(v).tostring())))
-                        for k, v in rowmask.items()])
+                        for k, v in list(rowmask.items())])
 
         rtn = {START: start, END: end, SYMBOL: symbol}
         rtn[VERSION] = CHUNK_VERSION_NUMBER
         rtn[COUNT] = len(ticks)
         rtn[COLUMNS] = {}
-        for k, v in data.items():
+        for k, v in list(data.items()):
             if k != 'index':
                 v = np.array(v)
                 v = self._ensure_supported_dtypes(v)

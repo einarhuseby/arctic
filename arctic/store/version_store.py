@@ -138,7 +138,7 @@ class VersionStore(object):
         if regex is not None:
             query ['symbol'] = {'$regex' : regex}
         if kwargs:
-            for k, v in kwargs.items():
+            for k, v in list(kwargs.items()):
                 query['metadata.' + k] = v
         if snapshot is not None:
             try:
@@ -348,7 +348,7 @@ class VersionStore(object):
             `str` : snapshot name which contains the version
             `datetime.datetime` : the version of the data that existed as_of the requested point in time
         """
-        print(self._get_info(symbol, as_of))
+        print((self._get_info(symbol, as_of)))
 
     def _get_info(self, symbol, as_of=None):
         _version = self._read_metadata(symbol, as_of=as_of)

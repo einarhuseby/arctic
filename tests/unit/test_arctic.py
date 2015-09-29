@@ -1,4 +1,4 @@
-import cPickle as pickle
+import pickle as pickle
 from mock import patch, MagicMock, sentinel, create_autospec, Mock, call
 import pytest
 from pymongo.errors import OperationFailure
@@ -21,13 +21,13 @@ def test_arctic_lazy_init():
             store.list_libraries()
             assert mc.called
             
-mock_conn_info = {u'authInfo': 
-                  {u'authenticatedUsers': [{u'user': u'research', u'userSource': u'admin'}]},
-                  u'ok': 1.0}
+mock_conn_info = {'authInfo': 
+                  {'authenticatedUsers': [{'user': 'research', 'userSource': 'admin'}]},
+                  'ok': 1.0}
 
-mock_conn_info_empty = {u'authInfo':
-                  {u'authenticatedUsers': []},
-                  u'ok': 1.0}
+mock_conn_info_empty = {'authInfo':
+                  {'authenticatedUsers': []},
+                  'ok': 1.0}
 
 def test_arctic_auth():
     with patch('pymongo.MongoClient', return_value=MagicMock(), autospec=True), \
@@ -292,7 +292,7 @@ def test_initialize_library_too_many_ns():
     self._conn = create_autospec(MongoClient)
     lib = create_autospec(ArcticLibraryBinding)
     lib.database_name = sentinel.db_name
-    self._conn.__getitem__.return_value.collection_names.return_value = [x for x in xrange(3001)]
+    self._conn.__getitem__.return_value.collection_names.return_value = [x for x in range(3001)]
     lib_type = Mock()
     with pytest.raises(ArcticException) as e:
         with patch.dict('arctic.arctic.LIBRARY_TYPES', {sentinel.lib_type: lib_type}), \

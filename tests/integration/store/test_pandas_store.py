@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from datetime import datetime as dt, timedelta as dtd
 from dateutil.rrule import rrule, DAILY
 from pandas import DataFrame, Series, DatetimeIndex, MultiIndex, read_csv, Panel, date_range, concat
@@ -56,7 +56,7 @@ def test_save_read_pandas_series_with_unicode_index_name(library):
     df = Series(data=['A', 'BC', 'DEF'],
                 index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
                                               (np.datetime64(dt(2013, 1, 2)),),
-                                              (np.datetime64(dt(2013, 1, 3)),)], names=[u'DATETIME']))
+                                              (np.datetime64(dt(2013, 1, 3)),)], names=['DATETIME']))
     library.write('pandas', df)
     saved_df = library.read('pandas').data
     assert np.all(df.values == saved_df.values)
@@ -80,7 +80,7 @@ def test_save_read_pandas_dataframe_with_unicode_index_name(library):
     df = DataFrame(data=['A', 'BC', 'DEF'],
                    index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
                                                  (np.datetime64(dt(2013, 1, 2)),),
-                                                 (np.datetime64(dt(2013, 1, 3)),)], names=[u'DATETIME']))
+                                                 (np.datetime64(dt(2013, 1, 3)),)], names=['DATETIME']))
     library.write('pandas', df)
     saved_df = library.read('pandas').data
     assert np.all(df.values == saved_df.values)
@@ -211,7 +211,7 @@ def test_append_pandas_dataframe(library):
 def test_empty_dataframe_multindex(library):
     df = DataFrame({'a': [], 'b': [], 'c': []})
     df = df.groupby(['a', 'b']).sum()
-    print df
+    print(df)
     library.write('pandas', df)
     saved_df = library.read('pandas').data
     assert np.all(df.values == saved_df.values)
@@ -279,16 +279,16 @@ def test_dataframe_append_should_promote_string_column(library):
     data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10')])
     data[:] = [(1, 2., 'Hello'), (2, 3., "World")]
     df = DataFrame(data, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
-                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=[u'DATETIME']))
+                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=['DATETIME']))
     data2 = np.zeros((1,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a30')])
     data2[:] = [(3, 4., 'Hello World - Good Morning')]
-    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=[u'DATETIME']))
+    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=['DATETIME']))
     expected_data = np.zeros((3,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a30')])
     expected_data[:] = [(1, 2., 'Hello'), (2, 3., "World"), (3, 4., 'Hello World - Good Morning')]
     expected = DataFrame(expected_data, MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
                                                                 (np.datetime64(dt(2013, 1, 2)),),
                                                                 (np.datetime64(dt(2013, 1, 3)),)],
-                                                               names=[u'DATETIME']))
+                                                               names=['DATETIME']))
 
     library.write('pandas', df)
     library.append('pandas', df2)
@@ -301,16 +301,16 @@ def test_dataframe_append_should_add_new_column(library):
     data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10')])
     data[:] = [(1, 2., 'Hello'), (2, 3., "World")]
     df = DataFrame(data, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
-                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=[u'DATETIME']))
+                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=['DATETIME']))
     data2 = np.zeros((1,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10'), ('D', 'f4')])
     data2[:] = [(4, 5., 'Hi', 6.)]
-    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=[u'DATETIME']))
+    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=['DATETIME']))
     expected_data = np.zeros((3,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10'), ('D', 'f4')])
     expected_data[:] = [(1, 2., 'Hello', np.nan), (2, 3., "World", np.nan), (4, 5., 'Hi', 6.)]
     expected = DataFrame(expected_data, MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
                                                                 (np.datetime64(dt(2013, 1, 2)),),
                                                                 (np.datetime64(dt(2013, 1, 3)),)],
-                                                               names=[u'DATETIME']))
+                                                               names=['DATETIME']))
 
     library.write('pandas', df)
     library.append('pandas', df2)
@@ -323,17 +323,17 @@ def test_dataframe_append_should_add_new_columns_and_reorder(library):
     data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10')])
     data[:] = [(1, 2., 'Hello'), (2, 3., "World")]
     df = DataFrame(data, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
-                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=[u'DATETIME']))
+                                                       (np.datetime64(dt(2013, 1, 2)),), ], names=['DATETIME']))
     data2 = np.zeros((1,), dtype=[('C', 'a10'), ('A', 'i4'), ('E', 'a1'), ('B', 'f4'), ('D', 'f4'), ('F', 'i4')])
     data2[:] = [('Hi', 4, 'Y', 5., 6., 7)]
-    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=[u'DATETIME']))
+    df2 = DataFrame(data2, index=MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 3)),)], names=['DATETIME']))
     expected_data = np.zeros((3,), dtype=[('C', 'a10'), ('A', 'i4'), ('E', 'a1'),
                                           ('B', 'f4'), ('D', 'f4'), ('F', 'i4')])
     expected_data[:] = [('Hello', 1, '', 2., np.nan, 0), ("World", 2, '', 3., np.nan, 0), ('Hi', 4, 'Y', 5., 6., 7)]
     expected = DataFrame(expected_data, MultiIndex.from_tuples([(np.datetime64(dt(2013, 1, 1)),),
                                                                 (np.datetime64(dt(2013, 1, 2)),),
                                                                 (np.datetime64(dt(2013, 1, 3)),)],
-                                                               names=[u'DATETIME']))
+                                                               names=['DATETIME']))
 
     library.write('pandas', df)
     library.append('pandas', df2)
@@ -511,7 +511,7 @@ def test_append_after_truncate_after_append(library):
 
 
 def test_can_write_pandas_df_with_object_columns(library):
-    expected = DataFrame(data=dict(A=['a', 'b', None, 'c'], B=[1., 2., 3., 4.]), index=range(4))
+    expected = DataFrame(data=dict(A=['a', 'b', None, 'c'], B=[1., 2., 3., 4.]), index=list(range(4)))
     library.write('objects', expected)
     saved_df = library.read('objects').data
 
@@ -519,7 +519,7 @@ def test_can_write_pandas_df_with_object_columns(library):
 
 
 def panel(i1, i2, i3):
-    return Panel(np.random.randn(i1, i2, i3), range(i1), ['A%d' % i for i in range(i2)],
+    return Panel(np.random.randn(i1, i2, i3), list(range(i1)), ['A%d' % i for i in range(i2)],
                  list(rrule(DAILY, count=i3, dtstart=dt(1970, 1, 1), interval=1)))
 
 
@@ -688,9 +688,9 @@ def test_daterange_large_DataFrame_middle(library):
 
 @pytest.mark.parametrize("df,assert_equal", [
     (DataFrame(index=date_range(dt(2001, 1, 1), freq='D', periods=30000),
-               data=range(30000), columns=['A']), assert_frame_equal),
+               data=list(range(30000)), columns=['A']), assert_frame_equal),
     (Series(index=date_range(dt(2001, 1, 1), freq='D', periods=30000),
-            data=range(30000)), assert_series_equal),
+            data=list(range(30000))), assert_series_equal),
 ])
 def test_daterange(library, df, assert_equal):
     df.index.name = 'idx'

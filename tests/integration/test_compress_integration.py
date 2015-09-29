@@ -24,12 +24,12 @@ def test_performance_sequential(n, length):
     now = dt.now()
     [lz4.decompress(y) for y in [lz4.compressHC(x) for x in _strarr]]
     lz4_time = (dt.now() - now).total_seconds()
-    print
-    print "LZ4 Test %sx len:%s" % (n, length)
-    print "    Cython LZ4 %s s" % clz4_time
-    print "    Cython LZ4 Parallel %s s" % clz4_time_p
-    print "    LZ4 %s s" % lz4_time
+    print()
+    print("LZ4 Test %sx len:%s" % (n, length))
+    print("    Cython LZ4 %s s" % clz4_time)
+    print("    Cython LZ4 Parallel %s s" % clz4_time_p)
+    print("    LZ4 %s s" % lz4_time)
 
 
 def random_string(N):
-    return ''.join(random.choice(list(string.printable) + ['hello', 'world', 'hellworld', 'Hello', 'w0rld']) for _ in xrange(int(N)))
+    return ''.join(random.choice(list(string.printable) + ['hello', 'world', 'hellworld', 'Hello', 'w0rld']) for _ in range(int(N)))

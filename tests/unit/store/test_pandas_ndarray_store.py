@@ -32,7 +32,7 @@ def test_can_convert_to_records_without_objects_returns_false_when_records_have_
 
 def test_can_convert_to_records_without_objects_returns_false_when_records_have_arrays_in_them():
     store = PandasStore()
-    store.to_records = Mock(return_value=np.rec.array([(1356998400000000000L, ['A', 'BC'])],
+    store.to_records = Mock(return_value=np.rec.array([(1356998400000000000, ['A', 'BC'])],
                                                       dtype=[('index', '<M8[ns]'), ('values', 'S2', (2,))]))
 
     with patch('arctic.store._pandas_ndarray_store.log') as mock_log:
@@ -44,7 +44,7 @@ def test_can_convert_to_records_without_objects_returns_false_when_records_have_
 
 def test_can_convert_to_records_without_objects_returns_true_otherwise():
     store = PandasStore()
-    store.to_records = Mock(return_value=np.rec.array([(1356998400000000000L, 'a')],
+    store.to_records = Mock(return_value=np.rec.array([(1356998400000000000, 'a')],
                                                       dtype=[('index', '<M8[ns]'), ('values', 'S2')]))
 
     with patch('arctic.store._pandas_ndarray_store.log') as mock_log:
@@ -56,7 +56,7 @@ def test_can_convert_to_records_without_objects_returns_true_otherwise():
 
 def test_to_records_raises_when_object_dtypes_present():
     store = PandasDataFrameStore()
-    df = pd.DataFrame(data=dict(A=['a', 'b', None, 'c'], B=[1., 2., 3., 4.]), index=range(4))
+    df = pd.DataFrame(data=dict(A=['a', 'b', None, 'c'], B=[1., 2., 3., 4.]), index=list(range(4)))
     with raises(TypeError) as e:
         store.to_records(df)
 

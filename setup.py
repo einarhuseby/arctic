@@ -50,7 +50,7 @@ class PyTest(TestCommand):
         # import here, cause outside the eggs aren't loaded
         import pytest
 
-        args = [self.pytest_args] if isinstance(self.pytest_args, basestring) else list(self.pytest_args)
+        args = [self.pytest_args] if isinstance(self.pytest_args, str) else list(self.pytest_args)
         args.extend(['--cov', 'arctic',
                      '--cov-report', 'xml',
                      '--cov-report', 'html',

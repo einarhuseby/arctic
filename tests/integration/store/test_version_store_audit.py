@@ -95,8 +95,8 @@ def test_audit_writes(library):
         mt.write(symbol, ts2)
 
     audit_log = library.read_audit_log(symbol)
-    assert audit_log == [{u'new_v': 2, u'symbol': u'TS1', u'message': u'l2', u'user': u'u2', u'orig_v': 1},
-                         {u'new_v': 1, u'symbol': u'TS1', u'message': u'l1', u'user': u'u1', u'orig_v': 0}]
+    assert audit_log == [{'new_v': 2, 'symbol': 'TS1', 'message': 'l2', 'user': 'u2', 'orig_v': 1},
+                         {'new_v': 1, 'symbol': 'TS1', 'message': 'l1', 'user': 'u1', 'orig_v': 0}]
     assert_frame_equal(ts1, library.read(symbol, audit_log[0]['orig_v']).data)
     assert_frame_equal(ts2, library.read(symbol, audit_log[0]['new_v']).data)
 
@@ -109,8 +109,8 @@ def test_metadata_changes_writes(library):
         mt.write(symbol, ts1, metadata={'some': 'data', 'original': 'data'})
 
     audit_log = library.read_audit_log(symbol)
-    assert audit_log == [{u'new_v': 2, u'symbol': u'TS1', u'message': u'l2', u'user': u'u2', u'orig_v': 1},
-                         {u'new_v': 1, u'symbol': u'TS1', u'message': u'l1', u'user': u'u1', u'orig_v': 0}]
+    assert audit_log == [{'new_v': 2, 'symbol': 'TS1', 'message': 'l2', 'user': 'u2', 'orig_v': 1},
+                         {'new_v': 1, 'symbol': 'TS1', 'message': 'l1', 'user': 'u1', 'orig_v': 0}]
     assert_frame_equal(ts1, library.read(symbol, audit_log[0]['orig_v']).data)
     assert_frame_equal(ts1, library.read(symbol, audit_log[0]['new_v']).data)
 

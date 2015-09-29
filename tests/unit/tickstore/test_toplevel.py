@@ -125,7 +125,7 @@ def test_slice_pandas_dataframe(start, end, expected_start_index, expected_end_i
 def test_slice_list_of_dicts(start, end, expected_start_index, expected_end_index):
     top_level_tick_store = TopLevelTickStore(Mock())
     dates = list(rrule(DAILY, count=5, dtstart=dt(2010, 1, 1), interval=2))
-    data = [{'index': date, 'A': val} for date, val in zip(dates, range(5))]
+    data = [{'index': date, 'A': val} for date, val in zip(dates, list(range(5)))]
     expected = data[expected_start_index:expected_end_index]
     result = top_level_tick_store._slice(data, start, end)
     assert expected == result
@@ -135,8 +135,8 @@ def test_write_pandas_data_to_right_libraries():
     self = create_autospec(TopLevelTickStore, _arctic_lib=MagicMock(), _collection=MagicMock())
     self._collection.find.return_value = [{'library_name': sentinel.libname1, 'start': sentinel.st1, 'end': sentinel.end1},
                                           {'library_name': sentinel.libname2, 'start': sentinel.st2, 'end': sentinel.end2}]
-    slice1 = range(2)
-    slice2 = range(4)
+    slice1 = list(range(2))
+    slice2 = list(range(4))
     when(self._slice).called_with(sentinel.data, sentinel.st1, sentinel.end1).then(slice1)
     when(self._slice).called_with(sentinel.data, sentinel.st2, sentinel.end2).then(slice2)
     mock_lib1 = Mock()

@@ -41,7 +41,7 @@ def get_arctic_lib(connection_string, **kwargs):
 
 def _get_arctic(instance, **kwargs):
     # Consider any kwargs passed to the Arctic as discriminators for the cache
-    key = instance, frozenset(iter(kwargs.items()))
+    key = instance, frozenset(iter(list(kwargs.items())))
 
     # Don't create lots of Arctic instances
     arctic = arctic_cache.get(key, None)

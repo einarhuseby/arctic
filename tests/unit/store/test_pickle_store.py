@@ -1,5 +1,5 @@
 import pandas as pd
-import cPickle
+import pickle
 import lz4
 import pytest
 
@@ -31,9 +31,9 @@ def test_write_object():
     assert version['blob'] == '__chunked__'
     coll = arctic_lib.get_top_level_collection.return_value
     assert coll.update_one.call_args_list == [call({'sha': checksum('sentinel.symbol',
-                                                                    {'data': Binary(lz4.compressHC(cPickle.dumps(sentinel.item, cPickle.HIGHEST_PROTOCOL)))}), 'symbol': 'sentinel.symbol'},
+                                                                    {'data': Binary(lz4.compressHC(pickle.dumps(sentinel.item, pickle.HIGHEST_PROTOCOL)))}), 'symbol': 'sentinel.symbol'},
                                                {'$set': {'segment': 0,
-                                                         'data': Binary(lz4.compressHC(cPickle.dumps(sentinel.item, cPickle.HIGHEST_PROTOCOL)), 0)},
+                                                         'data': Binary(lz4.compressHC(pickle.dumps(sentinel.item, pickle.HIGHEST_PROTOCOL)), 0)},
                                                          '$addToSet': {'parent': version['_id']}}, upsert=True)]
 
 
@@ -45,7 +45,7 @@ def test_read():
 
 def test_read_object_backwards_compat():
     self = create_autospec(PickleStore)
-    version = {'blob': Binary(lz4.compressHC(cPickle.dumps(object)))}
+    version = {'blob': Binary(lz4.compressHC(pickle.dumps(object)))}
     assert PickleStore.read(self, sentinel.arctic_lib, version, sentinel.symbol) == object
 
 
@@ -55,7 +55,7 @@ def test_read_object_2():
                'blob': '__chunked__'}
     coll = Mock()
     arctic_lib = Mock()
-    coll.find.return_value = [{'data': Binary(lz4.compressHC(cPickle.dumps(object))),
+    coll.find.return_value = [{'data': Binary(lz4.compressHC(pickle.dumps(object))),
                                'symbol': 'sentinel.symbol'}
                               ]
     arctic_lib.get_top_level_collection.return_value = coll
@@ -73,7 +73,7 @@ def test_read_backward_compatibility():
     # For newer versions; verify that unpickling fails when using cPickle
     if PANDAS_VERSION >= LooseVersion("0.16.1"):
         with pytest.raises(TypeError), open(fname) as fh:
-            cPickle.load(fh)
+            pickle.load(fh)
 
     # Verify that PickleStore() uses a backwards compatible unpickler.
     store = PickleStore()
@@ -83,7 +83,7 @@ def test_read_backward_compatibility():
         version = {'blob': lz4.compressHC(fh.read())}
     df = store.read(sentinel.arctic_lib, version, sentinel.symbol)
 
-    expected = pd.DataFrame(range(4), pd.date_range(start="20150101", periods=4))
+    expected = pd.DataFrame(list(range(4)), pd.date_range(start="20150101", periods=4))
     assert (df == expected).all().all()
 
 
@@ -92,7 +92,7 @@ def test_unpickle_highest_protocol():
     container has been pickled with HIGHEST_PROTOCOL.
     """
     version = {
-        'blob': lz4.compressHC(cPickle.dumps(pd.Series(), protocol=cPickle.HIGHEST_PROTOCOL)),
+        'blob': lz4.compressHC(pickle.dumps(pd.Series(), protocol=pickle.HIGHEST_PROTOCOL)),
     }
 
     store = PickleStore()

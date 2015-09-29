@@ -427,7 +427,7 @@ Version document:
         i = -1
 
         # Compress
-        idxs = range(int(np.ceil(float(length) / chunk_size)))
+        idxs = list(range(int(np.ceil(float(length) / chunk_size))))
         chunks = [(item[i * chunk_size: (i + 1) * chunk_size]).tostring() for i in idxs]
         compressed_chunks = compress_array(chunks)
 
